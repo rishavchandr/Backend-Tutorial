@@ -8,7 +8,15 @@ dotenv.config({
 })
 
 
-connectDB();
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000 , ()=>{
+        console.log(`server is running ${process.env.PORT}`)
+    })
+})
+.catch((error) => {
+    console.log("Connection falid : " , error)
+})
 
 
 
