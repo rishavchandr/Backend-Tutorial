@@ -16,4 +16,11 @@ app.use(express.urlencoded({extended: true , limit: '16kb'})) // use to handle t
 app.use(express.static("public")) // folder name public /we can use any . it use to stores files as pdf image or videos 
 app.use(cookieParser())
 
+//router import 
+import userRouter from "./routes/user.routes.js"
+
+
+//route declaration 
+app.use("/api/v1/users", userRouter)
+
 export {app}
