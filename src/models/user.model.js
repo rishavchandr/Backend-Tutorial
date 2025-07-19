@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         require: true,
-        uppercase: true,
         trim: true,
         index: true
     },
@@ -34,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        require: [true , "password is required"]
+        require: [true , 'password is required']
     },
     watchHistory: [
         {
@@ -50,10 +49,12 @@ const userSchema = new mongoose.Schema({
 },{timestamps: true})
 
 
-userSchema.pre("save" , async function (){
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
+userSchema.pre("save" , async function(next){
+    if(!this.isModified("password") && this.password) return next();
+    if(this.password){
+        this.password = await bcrypt.hash(this.password, 10)
+        next()
+    }
 })
 
 userSchema.methods.isPasswordCorrect = async function(password){

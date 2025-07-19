@@ -17,7 +17,7 @@ const registerUser = asyncHandler( async(req,res) => {
    //return response 
 
    const {username , email , fullName , password} = req.body
-   console.log("email : " , email)
+  // console.log("Request Body : " , req.body)
 
    if(
       [fullName , email , username , password].some((field) => field?.trim() === "")
@@ -25,13 +25,14 @@ const registerUser = asyncHandler( async(req,res) => {
       throw new ApiError(400,"user details not found ")
    }
 
-const exitedUser = User.findOne({
-    $or: [username , email]
+const exitedUser = await User.findOne({
+    $or: [{username}, {email}]
 })
 
 if(exitedUser){
     throw new ApiError(409, "User with email or username already exist")
 }
+//console.log("Request files: ",req.files)
 
 
 const avatarLocalPath = req.files?.avatar[0]?.path;
@@ -51,6 +52,7 @@ if(!avatar){
 const user = await User.create({
     fullName,
     avatar: avatar.url,
+    coverImage: coverImage?.url  || "",
     email,
     password,
     username: username.toLowerCase()
@@ -68,8 +70,6 @@ if(!createdUser){
 return res.status(201).json(
     new ApiResponse(200,createdUser,"User created Successfully")
 )
-
-
 
 })
 

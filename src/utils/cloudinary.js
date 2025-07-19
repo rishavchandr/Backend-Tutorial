@@ -18,7 +18,9 @@ const clodinaryUploadMethod = async (localUrlPath) => {
             resource_type: "auto"
         })
         //file has been successfully uploaded 
-        console.log("file has been uplaoded at cloudinary : " , response.url);
+        //console.log("file has been uplaoded at cloudinary : " , response.url);
+        fs.unlinkSync(localUrlPath)
+        console.log("cloudinay Response :", response)
         return response
     } catch (error) {
         //if there is any error in file then first unlink or remove the file from local server 
