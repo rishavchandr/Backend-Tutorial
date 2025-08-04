@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs"
+import { ApiError } from "./ApiError.js";
 
 
 // Configuration
@@ -20,7 +21,7 @@ const clodinaryUploadMethod = async (localUrlPath) => {
         //file has been successfully uploaded 
         //console.log("file has been uplaoded at cloudinary : " , response.url);
         fs.unlinkSync(localUrlPath)
-        console.log("cloudinay Response :", response)
+        //console.log("cloudinay Response :", response)
         return response
     } catch (error) {
         //if there is any error in file then first unlink or remove the file from local server 
@@ -30,4 +31,26 @@ const clodinaryUploadMethod = async (localUrlPath) => {
     }
 }
 
-export {clodinaryUploadMethod}
+const cloudinaryUploadToRemove = async(cloudinayUrl) => {
+     try {
+        const publicId = getPublicId(cloudinayUrl)
+        
+        const result = await cloudinary.uploader.destroy(publicId , {
+            resource_type: "auto"
+        })
+        
+        return result
+     } catch (error) {
+         throw new ApiError(500 , "Enable to delete  assert from cloudinary")
+     }
+}
+
+function getPublicId(url) {
+    const parts = url.split('/')
+    const fileWithExt = parts.pop();
+    const folder = parts.slice(parts.indexOf('upload') + 1).join('/');
+    const fileName = fileWithExt.split('.')[0]
+    return folder ? `${folder}/${fileName}` : fileName
+}
+
+export {clodinaryUploadMethod , cloudinaryUploadToRemove}
